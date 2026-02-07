@@ -17,74 +17,45 @@ Guide completion of development work by presenting clear options and handling ch
 
 ### Step 1: Verify Tests
 
-**Before presenting options, verify tests pass:**
-
-```bash
-# Run project's test suite
-npm test / cargo test / pytest / go test ./...
-```
-
-**If tests fail:**
-```
-Tests failing (<N> failures). Must fix before completing:
-
-[Show failures]
-
-Cannot proceed with merge/PR until tests pass.
-```
-
-Stop. Don't proceed to Step 2.
-
-**If tests pass:** Continue to Step 2.
+Run the project's test suite. If tests fail, show failures and fix them — don't proceed until green.
 
 ### Step 2: Determine Base Branch
 
 ```bash
-# Try common base branches
 git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 ```
 
-Or ask: "This branch split from main - is that correct?"
-
 ### Step 3: Present Options
 
-Use AskUserQuestion with these 4 options:
+Use AskUserQuestion with these 3 options:
 
-- **Merge locally** — Merge back to base branch, delete feature branch
-- **Create PR** — Push and create a Pull Request
-- **Keep as-is** — Leave the branch, handle it later
-- **Discard** — Delete this work entirely
+- **Merge locally** — Merge back to base branch, delete feature branch, clean up worktree
+- **Create PR** — Push and create a Pull Request, keep worktree for revisions
+- **Keep as-is** — Leave the branch and worktree for later
 
 ### Step 4: Execute Choice
 
 #### Option 1: Merge Locally
 
 ```bash
-# Switch to base branch
 git checkout <base-branch>
-
-# Pull latest
 git pull
-
-# Merge feature branch
 git merge <feature-branch>
 
-# Verify tests on merged result
+# Verify tests on merged result — merges can break things
 <test command>
 
-# If tests pass
+# Only after tests pass
 git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then clean up the worktree (Step 5).
 
 #### Option 2: Push and Create PR
 
 ```bash
-# Push branch
 git push -u origin <feature-branch>
 
-# Create PR
 gh pr create --title "<title>" --body "$(cat <<'EOF'
 ## Summary
 <2-3 bullets of what changed>
@@ -95,92 +66,29 @@ EOF
 )"
 ```
 
-Then: Cleanup worktree (Step 5)
+Keep the worktree — you may need it for PR revisions.
 
 #### Option 3: Keep As-Is
 
-Report: "Keeping branch <name>. Worktree preserved at <path>."
-
-**Don't cleanup worktree.**
-
-#### Option 4: Discard
-
-**Confirm first:**
-```
-This will permanently delete:
-- Branch <name>
-- All commits: <commit-list>
-- Worktree at <path>
-
-Type 'discard' to confirm.
-```
-
-Wait for exact confirmation.
-
-If confirmed:
-```bash
-git checkout <base-branch>
-git branch -D <feature-branch>
-```
-
-Then: Cleanup worktree (Step 5)
+Report the branch name and worktree path. Done.
 
 ### Step 5: Cleanup Worktree
 
-**For Options 1, 2, 4:**
+**For Option 1 only** (Option 2 keeps worktree for revisions, Option 3 is a no-op):
 
-Check if in worktree:
 ```bash
-git worktree list | grep $(git branch --show-current)
-```
-
-If yes:
-```bash
+# Worktrees are sibling directories: project--branch-name
 git worktree remove <worktree-path>
+git worktree prune
 ```
-
-**For Option 3:** Keep worktree.
 
 ## Quick Reference
 
-| Option | Merge | Push | Keep Worktree | Cleanup Branch |
-|--------|-------|------|---------------|----------------|
-| 1. Merge locally | ✓ | - | - | ✓ |
-| 2. Create PR | - | ✓ | ✓ | - |
-| 3. Keep as-is | - | - | ✓ | - |
-| 4. Discard | - | - | - | ✓ (force) |
-
-## Common Mistakes
-
-**Skipping test verification**
-- **Problem:** Merge broken code, create failing PR
-- **Fix:** Always verify tests before offering options
-
-**Open-ended questions**
-- **Problem:** "What should I do next?" → ambiguous
-- **Fix:** Present exactly 4 structured options
-
-**Automatic worktree cleanup**
-- **Problem:** Remove worktree when might need it (Option 2, 3)
-- **Fix:** Only cleanup for Options 1 and 4
-
-**No confirmation for discard**
-- **Problem:** Accidentally delete work
-- **Fix:** Require typed "discard" confirmation
-
-## Red Flags
-
-**Never:**
-- Proceed with failing tests
-- Merge without verifying tests on result
-- Delete work without confirmation
-- Force-push without explicit request
-
-**Always:**
-- Verify tests before offering options
-- Present exactly 4 options
-- Get typed confirmation for Option 4
-- Clean up worktree for Options 1 & 4 only
+| Option | Merge | Push | Keep Worktree | Delete Branch |
+|--------|-------|------|---------------|---------------|
+| 1. Merge locally | yes | - | - | yes |
+| 2. Create PR | - | yes | yes | - |
+| 3. Keep as-is | - | - | yes | - |
 
 ## Integration
 
