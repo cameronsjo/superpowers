@@ -7,30 +7,26 @@ description: "You MUST use this before any creative work - creating features, bu
 
 ## Overview
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
-
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+Turn ideas into designs and specs efficiently. Understand the project context, clarify intent with batched questions, then present the design in sections for validation.
 
 ## The Process
 
 **Understanding the idea:**
 - Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+- Use AskUserQuestion to clarify intent — batch up to 4 related questions per call
+- Prefer multiple-choice options (2-4 per question) over open-ended when possible
+- Focus on: purpose, constraints, success criteria
+- One round of questions is usually enough. Follow up only if answers reveal ambiguity
 
 **Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
+- Propose 2-3 approaches with trade-offs using AskUserQuestion
 - Lead with your recommended option and explain why
+- Let the user pick (or write in "Other")
 
 **Presenting the design:**
-- Once you believe you understand what you're building, present the design
-- Break it into sections of 200-300 words
+- Present the design in sections of 200-300 words
 - Ask after each section whether it looks right so far
 - Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
 
 ## After the Design
 
@@ -40,15 +36,14 @@ Start by understanding the current project context, then ask questions one at a 
 - Commit the design document to git
 
 **Implementation (if continuing):**
-- Ask: "Ready to set up for implementation?"
+- Use AskUserQuestion: "Ready to set up for implementation?" with options for yes/not yet/need changes
 - Use superpowers:using-git-worktrees to create isolated workspace
 - Use superpowers:writing-plans to create detailed implementation plan
 
 ## Key Principles
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
+- **Batch questions** - Use AskUserQuestion to ask up to 4 questions at once, not one-at-a-time interviews
+- **Multiple choice preferred** - Easier to answer than open-ended
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
+- **Explore alternatives** - Propose 2-3 approaches before settling
 - **Incremental validation** - Present design in sections, validate each
-- **Be flexible** - Go back and clarify when something doesn't make sense
