@@ -37,16 +37,10 @@ grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 
 ### 3. Ask User
 
-If no directory exists and no CLAUDE.md preference:
+If no directory exists and no CLAUDE.md preference, use AskUserQuestion:
 
-```
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/.config/superpowers/worktrees/<project-name>/ (global location)
-
-Which would you prefer?
-```
+- **.worktrees/** — Project-local, hidden directory
+- **~/.config/superpowers/worktrees/** — Global location, outside project
 
 ## Safety Verification
 
